@@ -16,11 +16,8 @@ function main(sources) {
   return sinks
 }
 
-// source: input (read) effects
-// sink: output (write) effects
-
-function DOMDriver(text$) {
 // Drivers: change the external world (imperative)
+function DOMDriver(text$) {
   text$.subscribe(text => {
     const container = document.querySelector('#app')
     container.textContent = text
