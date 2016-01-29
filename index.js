@@ -1,14 +1,25 @@
-const Rx = require('rx')
-const Cycle = require('@cycle/core')
-const CycleDOM = require('@cycle/dom')
-const h1 = CycleDOM.h1
-const span = CycleDOM.span
-const makeDOMDriver = CycleDOM.makeDOMDriver
+import Rx from 'rx'
+import Cycle from '@cycle/core'
+import { label, input, h1, hr, div, makeDOMDriver } from '@cycle/dom'
 
 // Logic: Event stream (functional)
 function main(sources) {
-  return  {}
+  const inputEv$ = sources.DOM.select('.field').events('input')
+  const name$ = inputEv$.map(ev => ev.target.value).startWith('')
+
+  return {
+    DOM: name$.map(name =>
+      div([
+        label('Name:'),
+        input('.field', {type: 'text'}),
+        hr(),
+        h1(`Hello ${name} !`)
+      ])
+    )
+  }
 }
+
+
 
 const drivers = {
   DOM: makeDOMDriver('#app'),
