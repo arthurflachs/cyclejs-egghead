@@ -1,4 +1,5 @@
 const Rx = require('rx')
+const Cycle = require('@cycle/core')
 
 // Logic: Event stream (functional)
 function main(sources) {
@@ -33,24 +34,9 @@ function consoleLogDriver(msg$) {
   msg$.subscribe(msg => console.log(msg))
 }
 
-// a = f(b)
-// b = g(a)
-function run(mainFn, drivers) {
-  const proxySources = {}
-  Object.keys(drivers).forEach(key => {
-    proxySources[key] = new Rx.Subject()
-  })
-  const sinks = mainFn(proxySources)
-
-  Object.keys(drivers).forEach(key => {
-    const source = drivers[key](sinks[key])
-    source.subscribe(x => proxySources[key].onNext(x))
-  })
-}
-
 const drivers = {
   DOM: DOMDriver,
   Log: consoleLogDriver,
 }
 
-run(main, drivers)
+Cycle.run(main, drivers)

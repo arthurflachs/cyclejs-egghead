@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/arthurflachs/cyclejs-egghead#readme",
   "dependencies": {
+    "@cycle/core": "^6.0.0",
     "rx": "^4.0.7"
   },
   "devDependencies": {
