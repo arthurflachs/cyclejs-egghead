@@ -1,13 +1,21 @@
 const Rx = require('rx')
 
 // Logic: Event stream (functional)
-function main() {
+function main(DOMSource) {
+  const click$ = DOMSource
   return {
-    DOM: Rx.Observable.timer(0, 1000)
-      .map(i => `Seconds elapsed ${i}`),
+    DOM: click$
+      .startWith(null)
+      .flatMapLatest(() =>
+        Rx.Observable.timer(0, 1000)
+          .map(i => `Seconds elapsed ${i}`)
+      ),
     Log: Rx.Observable.timer(0, 2000).map(i => 2 * i),
   }
 }
+
+// source: input (read) effects
+// sink: output (write) effects
 
 function DOMDriver(text$) {
 // Drivers: change the external world (imperative)
@@ -15,17 +23,25 @@ function DOMDriver(text$) {
     const container = document.querySelector('#app')
     container.textContent = text
   })
+
+  const DOMSource = Rx.Observable.fromEvent(document, 'click')
+  return DOMSource
 }
 
 function consoleLogDriver(msg$) {
   msg$.subscribe(msg => console.log(msg))
 }
 
+// a = f(b)
+// b = g(a)
 function run(mainFn, drivers) {
-  const sinks = mainFn()
-  Object.keys(drivers).forEach(key => {
-    drivers[key](sinks[key])
-  })
+  const proxyDOMSource = new Rx.Subject()
+  const sinks = mainFn(proxyDOMSource)
+  const DOMSource = drivers.DOM(sinks.DOM)
+  DOMSource.subscribe(proxyDOMSource.onNext.bind(proxyDOMSource))
+  //Object.keys(drivers).forEach(key => {
+    //drivers[key](sinks[key])
+  //})
 }
 
 const drivers = {
