@@ -1,0 +1,26 @@
+{
+  "name": "cyclejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --inline --hot"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arthurflachs/cyclejs-egghead.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arthurflachs/cyclejs-egghead/issues"
+  },
+  "homepage": "https://github.com/arthurflachs/cyclejs-egghead#readme",
+  "dependencies": {
+    "rx": "^4.0.7"
+  },
+  "devDependencies": {
+    "webpack": "^1.12.12",
+    "webpack-dev-server": "^1.14.1"
+  }
+}
