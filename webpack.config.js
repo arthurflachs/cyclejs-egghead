@@ -5,6 +5,11 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     path: '/dist',
-    publicPath: '/'
+    publicPath: '/',
+  },
+  module: {
+    loaders: [
+      { test: /\.js$/, loader: 'babel', exclude: /node_modules/ }
+    ]
   }
 }
