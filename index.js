@@ -1,3 +1,13 @@
+function h(tagName, children) {
+  return {
+    tagName: tagName,
+    children: children,
+  }
+}
+
+const h1 = h.bind(null, 'H1')
+const span = h.bind(null, 'SPAN')
+
 const Rx = require('rx')
 const Cycle = require('@cycle/core')
 
@@ -10,19 +20,11 @@ function main(sources) {
       .startWith(null)
       .flatMapLatest(() =>
         Rx.Observable.timer(0, 1000)
-        .map(i => {
-          return {
-            tagName: 'H1',
-            children: [
-              {
-                tagName: 'SPAN',
-                children: [
-                  `Seconds elapsed ${i}`
-                ]
-              },
-            ]
-          }
-        })
+        .map(i => h1([
+          span([
+            `Seconds elapsed ${i}`
+          ])
+        ]))
       ),
     Log: Rx.Observable.timer(0, 2000).map(i => 2 * i),
   }
