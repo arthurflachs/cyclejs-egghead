@@ -38,11 +38,12 @@ function view(state$) {
 }
 function LabeledSlider(sources) {
   const change$ = intent(sources.DOM)
-  const value$ = model(change$, sources.props)
-  const vtree$ = view(value$)
+  const state$ = model(change$, sources.props)
+  const vtree$ = view(state$)
 
   return {
     DOM: vtree$,
+    value: state$.map(state => state.value),
   }
 }
 
@@ -62,6 +63,7 @@ function main(sources) {
     DOM: sources.DOM, props: weightProps$
   })
   const weightVTree$ = weightSinks.DOM
+  const weightValue$ = weightSinks.value
 
   const heightProps$ = Rx.Observable.of({
     label: 'Height',
@@ -74,12 +76,20 @@ function main(sources) {
     DOM: sources.DOM, props: heightProps$
   })
   const heightVTree$ = heightSinks.DOM
+  const heightValue$ = heightSinks.value
+
+  const bmi$ = Rx.Observable.combineLatest(weightValue$, heightValue$,
+    (weight, height) => {
+      const heightMeters = height * 0.01
+      return Math.round(weight / (heightMeters * heightMeters))
+    })
 
   const vtree$ = Rx.Observable.combineLatest(
-    weightVTree$, heightVTree$, (weightVTree, heightVTree) =>
+    bmi$, weightVTree$, heightVTree$, (bmi, weightVTree, heightVTree) =>
     div([
       weightVTree,
       heightVTree,
+      h2(`BMI is ${bmi}`)
     ])
   )
 
